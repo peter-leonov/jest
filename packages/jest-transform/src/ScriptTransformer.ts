@@ -375,7 +375,7 @@ export default class ScriptTransformer {
     const isInternalModule = !!(options && options.isInternalModule);
     const isCoreModule = !!(options && options.isCoreModule);
     const content = stripShebang(
-      fileSource || fs.readFileSync(filename, 'utf8'),
+      fileSource || fs.readFileSync(filename.split('?')[0], 'utf8'),
     );
 
     let code = content;
@@ -678,7 +678,7 @@ const readCacheFile = (cachePath: Config.Path): string | null => {
 };
 
 const getScriptCacheKey = (filename: Config.Path, instrument: boolean) => {
-  const mtime = fs.statSync(filename).mtime;
+  const mtime = fs.statSync(filename.split('?')[0]).mtime;
   return filename + '_' + mtime.getTime() + (instrument ? '_instrumented' : '');
 };
 

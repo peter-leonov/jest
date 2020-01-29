@@ -432,7 +432,7 @@ class Runtime {
         '__mocks__',
         moduleFileName,
       );
-      if (fs.existsSync(potentialManualMock)) {
+      if (fs.existsSync(potentialManualMock.split('?')[0])) {
         isManualMock = true;
         modulePath = potentialManualMock;
       }
@@ -472,8 +472,8 @@ class Runtime {
     options: InternalModuleOptions | undefined,
     moduleRegistry: ModuleRegistry,
   ) {
-    if (path.extname(modulePath) === '.json') {
-      const text = stripBOM(fs.readFileSync(modulePath, 'utf8'));
+    if (path.extname(modulePath.split('?')[0]) === '.json') {
+      const text = stripBOM(fs.readFileSync(modulePath.split('?')[0], 'utf8'));
 
       const transformedFile = this._scriptTransformer.transformJson(
         modulePath,
@@ -484,8 +484,8 @@ class Runtime {
       localModule.exports = this._environment.global.JSON.parse(
         transformedFile,
       );
-    } else if (path.extname(modulePath) === '.node') {
-      localModule.exports = require(modulePath);
+    } else if (path.extname(modulePath.split('?')[0]) === '.node') {
+      localModule.exports = require(modulePath.split('?')[0]);
     } else {
       // Only include the fromPath if a moduleName is given. Else treat as root.
       const fromPath = moduleName ? from : null;
@@ -619,7 +619,7 @@ class Runtime {
       if (
         coveredFiles.has(sourcePath) &&
         this._needsCoverageMapped.has(sourcePath) &&
-        fs.existsSync(this._sourceMapRegistry[sourcePath])
+        fs.existsSync(this._sourceMapRegistry[sourcePath].split('?')[0])
       ) {
         result[sourcePath] = this._sourceMapRegistry[sourcePath];
       }
